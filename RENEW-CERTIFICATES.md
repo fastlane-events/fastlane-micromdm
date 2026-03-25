@@ -122,6 +122,82 @@ mdmctl get dep-account
 
 **IMPORTANT:** You MUST upload the public key before downloading the token. If you download first, ABM encrypts it with the old key and you'll get a `pkcs7: no enveloped recipient` error.
 
+## VPP Token Renewal (separate, also yearly)
+
+The VPP (Volume Purchase Program) content token is used for app license management. It expires yearly.
+
+### Renewal History
+
+| Year | Expiry Date | Renewed On |
+|------|-------------|------------|
+| 2026 | 2026-03-15  | 2025-03-15 |
+| 2027 | 2027-03-25  | 2026-03-25 |
+
+### Step 1: Download new content token from Apple Business Manager
+
+1. Go to https://business.apple.com
+2. Sign in with your organization account
+3. Go to **Settings** (bottom-left) > **Payments and Billing** > **Content Tokens**
+4. Find the token for your MDM server / location
+5. Click **Download** to get a new `sToken_for_Fastlane_B.V..vpptoken` file
+
+### Step 2: Replace the token file
+
+Copy the downloaded file into the repo root, replacing the existing one:
+
+```bash
+cp ~/Downloads/sToken_for_Fastlane_B.V..vpptoken /path/to/micromdm/sToken_for_Fastlane_B.V..vpptoken
+```
+
+### Step 3: Decode and verify the new token
+
+The `.vpptoken` file is base64-encoded JSON. Decode it to verify the new expiry date:
+
+```bash
+cat sToken_for_Fastlane_B.V..vpptoken | base64 -d
+```
+
+You should see JSON like:
+```json
+{
+  "expDate": "2027-03-25T03:47:21+0000",
+  "token": "MHXEuDgd+Y1o6...",
+  "orgName": "Fastlane B.V."
+}
+```
+
+### Step 4: Update all token files
+
+Three files need to be updated with the new token data:
+
+1. **`vpp_token.json`** — Update with the decoded JSON (expDate, token, orgName)
+2. **`token.vpptoken`** — Replace contents with the full base64 string from the downloaded file
+3. **`config/vpp.json`** — Update the `sToken` field with the new raw token value (the `token` field from the decoded JSON, NOT the base64)
+
+### Step 5: Update VPP_TOKEN in cashless-backend
+
+The `VPP_TOKEN` environment variable in the cashless-backend `.env` file needs the **base64-encoded** string (the full contents of `sToken_for_Fastlane_B.V..vpptoken`):
+
+```bash
+cat sToken_for_Fastlane_B.V..vpptoken
+```
+
+Copy the output and update `VPP_TOKEN` in the cashless-backend `.env`.
+
+### Step 6: Deploy / restart services
+
+Restart any services that use the VPP token (MicroMDM, cashless-backend, etc.).
+
+### Quick reference: file mapping
+
+| File | Contents | Format |
+|------|----------|--------|
+| `sToken_for_Fastlane_B.V..vpptoken` | Downloaded from Apple | Base64-encoded JSON |
+| `token.vpptoken` | Copy of the above | Base64-encoded JSON |
+| `vpp_token.json` | Decoded token data | Plain JSON |
+| `config/vpp.json` | Token for MicroMDM config | JSON with `sToken` field |
+| cashless-backend `.env` `VPP_TOKEN` | For backend API | Base64-encoded JSON |
+
 ## Tips
 
 - The password only needs to be consistent within one renewal cycle (all steps use the same one)
