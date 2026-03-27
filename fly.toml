@@ -14,6 +14,7 @@ primary_region = 'ams'
   MICROMDM_HTTP_ADDR = '0.0.0.0:8080'
   MICROMDM_SERVER_URL = 'https://mdm.fastlane.events'
   MICROMDM_TLS = 'false'
+  MICROMDM_SCEP_CLIENT_VALIDITY = '18250'
   MICROMDM_WEBHOOK_URL = 'https://eohfigodcu4lxci.m.pipedream.net'
 
 [[mounts]]

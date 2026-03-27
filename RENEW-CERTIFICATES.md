@@ -198,6 +198,35 @@ Restart any services that use the VPP token (MicroMDM, cashless-backend, etc.).
 | `config/vpp.json` | Token for MicroMDM config | JSON with `sToken` field |
 | cashless-backend `.env` `VPP_TOKEN` | For backend API | Base64-encoded JSON |
 
+## SCEP Device Certificate Expiration
+
+When a device enrolls, it receives a SCEP identity certificate used to sign all MDM communication.
+If this certificate expires, the server rejects all messages from the device with:
+
+```
+pkcs7: signing time "..." is outside of certificate validity "..." to "..."
+```
+
+**There is no way to renew a SCEP certificate remotely.** The device must re-enroll (factory reset + DEP auto-enrollment).
+
+### Configuration
+
+The SCEP client certificate validity is controlled by `MICROMDM_SCEP_CLIENT_VALIDITY` (in days) in `fly.toml`.
+
+| Setting | Default | Current |
+|---------|---------|---------|
+| `MICROMDM_SCEP_CLIENT_VALIDITY` | 365 (1 year) | 18250 (50 years) |
+
+Changed on 2026-03-27 after device `00008020-0005252A21F0402E` expired with the 365-day default.
+
+### Recovery steps when a device certificate expires
+
+1. Factory reset the device (Settings > General > Transfer or Reset > Erase All Content and Settings)
+2. The device will auto-re-enroll via DEP/ABM during Setup Assistant
+3. The new SCEP certificate will use the configured validity (currently 50 years)
+
+Alternative: wipe remotely via Apple Business Manager (business.apple.com) — independent of MDM.
+
 ## Tips
 
 - The password only needs to be consistent within one renewal cycle (all steps use the same one)
