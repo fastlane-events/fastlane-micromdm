@@ -3,7 +3,7 @@ FROM golang:1.20 AS builder
 WORKDIR /go/src/github.com/micromdm/micromdm/
 COPY micromdm/ .
 RUN make deps
-RUN make
+RUN CGO_ENABLED=0 make
 
 FROM alpine:latest
 RUN apk --update add ca-certificates
