@@ -15,7 +15,7 @@ primary_region = 'ams'
   MICROMDM_SERVER_URL = 'https://mdm.fastlane.events'
   MICROMDM_TLS = 'false'
   MICROMDM_SCEP_CLIENT_VALIDITY = '18250'
-  MICROMDM_WEBHOOK_URL = 'https://eohfigodcu4lxci.m.pipedream.net'
+  MICROMDM_WEBHOOK_URL = 'https://ticket-api.fastlane.events/webhooks/mdm/apple?token=a93219b229b0e26d63ef9d4d28e42bb9e9a88d27cc86ae0396ccfd115b25dc63'
 
 [[mounts]]
   source = 'micromdm_data'
