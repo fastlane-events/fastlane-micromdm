@@ -177,7 +177,7 @@ func protoToCommand(pb *mdmproto.Command) *Command {
 
 		var (
 			options       *InstallApplicationOptions
-			configuration *InstallApplicationConfiguration
+			configuration map[string]string
 			attributes    *InstallApplicationAttributes
 		)
 
@@ -191,7 +191,7 @@ func protoToCommand(pb *mdmproto.Command) *Command {
 
 		pbconfig := pbc.GetConfiguration()
 		if pbconfig != nil {
-			configuration = &InstallApplicationConfiguration{}
+			configuration = pbconfig.GetDictionary()
 		}
 
 		pbattributes := pbc.GetAttributes()
