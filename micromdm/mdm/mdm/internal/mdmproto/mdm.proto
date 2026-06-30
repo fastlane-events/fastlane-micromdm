@@ -161,7 +161,9 @@ message InstallApplicationOptions {
   int64 purchase_method = 1;
 }
 
-message InstallApplicationConfiguration {}
+message InstallApplicationConfiguration {
+  map<string, string> dictionary = 1; // managed app configuration delivered as com.apple.configuration.managed
+}
 
 message InstallApplicationAttributes {}
 

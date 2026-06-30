@@ -153,17 +153,19 @@ type InstallApplication struct {
 	Identifier            *string                          `plist:",omitempty" json:"identifier,omitempty"`
 	ManagementFlags       *int                             `plist:",omitempty" json:"management_flags,omitempty"`
 	ChangeManagementState *string                          `plist:",omitempty" json:"change_management_state,omitempty"`
-	ManifestURL           *string                          `plist:",omitempty" json:"manifest_url,omitempty"`
-	Options               *InstallApplicationOptions       `plist:"Options,omitempty" json:"options,omitempty"`
-	Configuration         *InstallApplicationConfiguration `plist:",omitempty" json:"configuration,omitempty"`
-	Attributes            *InstallApplicationAttributes    `plist:",omitempty" json:"attributes,omitempty"`
+	ManifestURL           *string                       `plist:",omitempty" json:"manifest_url,omitempty"`
+	Options               *InstallApplicationOptions    `plist:"Options,omitempty" json:"options,omitempty"`
+	// Configuration is the managed app configuration dictionary. Apple delivers it to
+	// the app as the com.apple.configuration.managed key in UserDefaults. It is marshaled
+	// into the command plist under the Configuration key as a <dict> of string values.
+	Configuration map[string]string             `plist:",omitempty" json:"configuration,omitempty"`
+	Attributes    *InstallApplicationAttributes `plist:",omitempty" json:"attributes,omitempty"`
 }
 
 type InstallApplicationOptions struct {
 	PurchaseMethod *int64 `plist:"PurchaseMethod,omitempty" json:"purchase_method,omitempty"`
 }
 
-type InstallApplicationConfiguration struct{}
 type InstallApplicationAttributes struct{}
 
 type AccountConfiguration struct {

@@ -212,7 +212,9 @@ func commandToProto(cmd *Command) (*mdmproto.Command, error) {
 			}
 		}
 		if cmd.InstallApplication.Configuration != nil {
-			configuration = &mdmproto.InstallApplicationConfiguration{}
+			configuration = &mdmproto.InstallApplicationConfiguration{
+				Dictionary: cmd.InstallApplication.Configuration,
+			}
 		}
 		if cmd.InstallApplication.Attributes != nil {
 			attributes = &mdmproto.InstallApplicationAttributes{}
