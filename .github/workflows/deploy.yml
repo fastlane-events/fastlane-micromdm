@@ -1,0 +1,46 @@
+name: CI / Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Never run two deploys at once; a newer push to main supersedes an in-flight one.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Build & test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: micromdm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          # Match the Dockerfile builder (golang:1.20) used for the deployed image.
+          go-version: "1.20"
+          cache-dependency-path: micromdm/go.sum
+      - run: go build ./...
+      # No standalone `go vet ./...`: this is a fork of upstream micromdm with
+      # pre-existing vet debt (e.g. platform/dep/sync unkeyed struct literals).
+      # `go test` already runs the high-confidence vet subset on tested packages.
+      - run: go test ./...
+
+  deploy:
+    name: Deploy to Fly.io
+    needs: test
+    # Only deploy on a merge/push to main — PRs run test only.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      # fly.toml (app = micromdm-app) and the Dockerfile live at the repo root.
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
