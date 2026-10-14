@@ -112,7 +112,7 @@ Examples:
 type devicesTableOutput struct{ w *tabwriter.Writer }
 
 func (out *devicesTableOutput) BasicHeader() {
-	fmt.Fprintf(out.w, "UDID\tSerialNumber\tEnrollmentStatus\tLastSeen\n")
+	fmt.Fprintf(out.w, "UDID\tSerialNumber\tEnrollmentStatus\tLastSeen\tOSVersion\tModel\n")
 }
 
 func (out *devicesTableOutput) BasicFooter() {
@@ -146,7 +146,7 @@ func (cmd *getCommand) getDevices(args []string) error {
 		return err
 	}
 	for _, d := range devices {
-		fmt.Fprintf(out.w, "%s\t%s\t%v\t%s\n", d.UDID, d.SerialNumber, d.EnrollmentStatus, d.LastSeen)
+		fmt.Fprintf(out.w, "%s\t%s\t%v\t%s\t%s\t%s\n", d.UDID, d.SerialNumber, d.EnrollmentStatus, d.LastSeen, d.OSVersion, d.ProductName)
 	}
 	return nil
 }

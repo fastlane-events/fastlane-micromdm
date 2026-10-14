@@ -24,6 +24,18 @@ type DeviceDTO struct {
 	EnrollmentStatus bool             `json:"enrollment_status"`
 	LastSeen         time.Time        `json:"last_seen"`
 	DEPProfileStatus DEPProfileStatus `json:"dep_profile_status"`
+
+	// Hardware / OS identity as reported by the device in its Authenticate
+	// check-in (refreshed on every (re-)enrollment). Exposed so consumers can
+	// show the iOS version and model without issuing a DeviceInformation
+	// command per device. Empty for devices that have never enrolled (e.g.
+	// DEP-assigned only).
+	OSVersion    string `json:"os_version"`
+	BuildVersion string `json:"build_version"`
+	ProductName  string `json:"product_name"`
+	Model        string `json:"model"`
+	ModelName    string `json:"model_name"`
+	DeviceName   string `json:"device_name"`
 }
 
 func (svc *DeviceService) ListDevices(ctx context.Context, opt ListDevicesOption) ([]DeviceDTO, error) {
@@ -36,6 +48,12 @@ func (svc *DeviceService) ListDevices(ctx context.Context, opt ListDevicesOption
 			EnrollmentStatus: d.Enrolled,
 			LastSeen:         d.LastSeen,
 			DEPProfileStatus: d.DEPProfileStatus,
+			OSVersion:        d.OSVersion,
+			BuildVersion:     d.BuildVersion,
+			ProductName:      d.ProductName,
+			Model:            d.Model,
+			ModelName:        d.ModelName,
+			DeviceName:       d.DeviceName,
 		})
 	}
 	return dto, err
